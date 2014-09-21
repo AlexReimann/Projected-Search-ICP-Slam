@@ -1,4 +1,4 @@
-Projected-Search-ICP-Slam
+Projected-Search-ICP-Slam (Title is work in progress...)
 =========================
 
 Implementation of fast cpu based ICP algroithm for kinect etc. using restricted search in depth frame
