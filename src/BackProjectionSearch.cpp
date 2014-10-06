@@ -86,6 +86,7 @@ namespace BackProjectionICP
 		Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> transformedOldPoints;
 
 		Eigen::Matrix4f fullTransformation = Eigen::Matrix4f::Identity();
+		Eigen::Matrix4f fullTransformationTransposed = Eigen::Matrix4f::Identity();
 
 		for (int i = 0; i < numberOfIterations; ++i)
 		{
@@ -114,12 +115,21 @@ namespace BackProjectionICP
 			//std::cout << "-------------------------End of iteration-------------------------" << std::endl;
 		}
 		
-		if (resultOutputFile.is_open())
-		{
-			resultOutputFile << fullTransformation.format(matlabFormat);
-		}
+		//if (resultOutputFile.is_open())
+		//{
+		//	resultOutputFile << fullTransformation.format(matlabFormat);
+		//}
 
 		boost::chrono::milliseconds icpTime = boost::chrono::duration_cast<boost::chrono::milliseconds>(boost::chrono::thread_clock::now() - startOfIcp);
+
+		//Transposing transformation matrix:
+		//   R   | -R'*t
+		// ------ -------
+		// 0 0 0 |   1
+
+		fullTransformationTransposed.block<3, 3>(0, 0) = fullTransformation.block<3, 3>(0, 0).transpose();
+		fullTransformationTransposed.block<3, 1>(0, 3) = -fullTransformation.block<3, 3>(0, 0).transpose() * fullTransformation.block<3, 1>(0, 3);
+
 		return fullTransformation;
 	}
 
